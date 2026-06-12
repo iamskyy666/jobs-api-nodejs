@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new Schema({
   name: {
@@ -24,6 +25,13 @@ const UserSchema = new Schema({
     required: [true, "Please provide a password!"],
     minLength: 8,
   },
+});
+
+// Mongoose middleware - hash password
+// ⚠️ Don't use arrow f(x) - Scoping issues with 'this' kw.
+UserSchema.pre("save", async function () {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 const User = mongoose.model("User", UserSchema);
