@@ -2,7 +2,12 @@ import { StatusCodes } from "http-status-codes";
 import Job from "../models/Job.model.js";
 
 const getAllJobs = async (req, res) => {
-  const {} = req.body;
+  const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
+  res.status(StatusCodes.OK).json({
+    msg: "✅ Fetched all jobs successfully!",
+    total_jobs: jobs.length,
+    jobs,
+  });
 };
 
 const getSingleJob = async (req, res) => {
