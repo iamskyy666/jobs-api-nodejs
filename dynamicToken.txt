@@ -1,0 +1,5 @@
+Set Token Dynamically in PostMan (creating a Global variable)
+
+Code (inside Scripts) - 
+const jsonData = pm.response.json();
+pm.globals.set("accessToken",jsonData.token);
