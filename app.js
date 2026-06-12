@@ -8,6 +8,7 @@ import errorHandlerMiddleware from "./middleware/error-handler.middleware.js";
 import authRouter from "./routes/auth.router.js";
 import jobsRouter from "./routes/jobs.router.js";
 import connectDB from "./db/connectDB.js";
+import authMiddleware from "./middleware/authentication.middleware.js";
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.get("/", (_, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", jobsRouter);
+app.use("/api/v1/jobs", authMiddleware, jobsRouter);
 
 // middlewares
 app.use(notFoundMiddleware);
