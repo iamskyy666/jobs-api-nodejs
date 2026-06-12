@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import Job from "../models/Job.model.js";
 import NotFoundError from "../errors/not-found.js";
+import BadRequestError from "../errors/bad-request.js";
 
 const getAllJobs = async (req, res) => {
   const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
@@ -39,7 +40,29 @@ const createJob = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-  res.send("update a job!");
+  const {
+    body: { company, position },
+    user: { userId },
+    params: { id: jobId },
+  } = req; // nested destructuring
+
+  if (company === "" || position === "") {
+    throw new BadRequestError("🔴 Company/Position fields cannot be empty!");
+  }
+
+  const job = await Job.findOneAndUpdate(
+    { _id: jobId, createdBy: userId },
+    req.body,
+    { new: true, runValidators: true },
+  );
+
+  if (!job) {
+    throw new NotFoundError(`🔴 No job found with id: ${jobId}`);
+  }
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "✅ Updated job successfully!", job });
+
 };
 
 const deleteJob = async (req, res) => {
