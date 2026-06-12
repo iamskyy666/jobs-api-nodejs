@@ -53,5 +53,11 @@ UserSchema.methods.generateJWT = function () {
   ); // userId, jobId - better naming convention, less confusing than user._id or job._id
 };
 
+//! Compare/Match Passwords - Instance Method 🟢
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+
 const User = mongoose.model("User", UserSchema);
 export default User;
