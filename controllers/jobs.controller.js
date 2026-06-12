@@ -62,11 +62,25 @@ const updateJob = async (req, res) => {
   res
     .status(StatusCodes.OK)
     .json({ message: "✅ Updated job successfully!", job });
-
 };
 
 const deleteJob = async (req, res) => {
-  res.send("delete a job!");
+  const {
+    user: { userId },
+    params: { id: jobId },
+  } = req; // nested destructuring
+
+  const job = await Job.findOneAndDelete({
+    _id: jobId,
+    createdBy: userId,
+  });
+
+  if (!job) {
+    throw new NotFoundError(`🔴 No job found with id: ${jobId}`);
+  }
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "✅ Selected job DELETED successfully!", deleted_job: job });
 };
 
 export { getAllJobs, getSingleJob, createJob, updateJob, deleteJob };
