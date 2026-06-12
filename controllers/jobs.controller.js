@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import Job from "../models/Job.model.js";
+import NotFoundError from "../errors/not-found.js";
 
 const getAllJobs = async (req, res) => {
   const jobs = await Job.find({ createdBy: req.user.userId }).sort("createdAt");
@@ -11,7 +12,22 @@ const getAllJobs = async (req, res) => {
 };
 
 const getSingleJob = async (req, res) => {
-  res.send("get single job!");
+  const {
+    user: { userId },
+    params: { id: jobId },
+  } = req; // nested destructuring
+
+  const job = await Job.findOne({
+    _id: jobId,
+    createdBy: userId,
+  });
+
+  if (!job) {
+    throw new NotFoundError(`🔴 No job found with id: ${jobId}`);
+  }
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "✅ Fetched job successfully!", job });
 };
 
 const createJob = async (req, res) => {
