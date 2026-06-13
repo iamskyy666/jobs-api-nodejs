@@ -22,19 +22,26 @@ const errorHandlerMiddleware = (err, req, res, next) => {
 
   //! Refactored code - better/friendly error outputs.
 
+   //🔵 Validation Err.
   if (err.name === "ValidationError") {
-    // Validation Err.
     customError.msg = Object.values(err.errors)
       .map((item) => item.message)
       .join(",");
     customError.statusCode = 400;
   }
 
+  //🔵 Duplicate Err.
   if (err.code && err.code === 11000) {
-    // Duplicate Err.
     customError.msg = `🔴 Duplicate value entered for ${Object.keys(err.keyValue)} field. Please choose another value`;
     customError.statusCode = 400;
   }
+
+  //🔵 Cast Err.
+  if(err.name === 'CastError'){
+    customError.msg=`🔴 No item found with id ${err.value}!`
+    customError.statusCode = 404; // not found!
+  }
+
   return res.status(customError.statusCode).json({
     msg: customError.msg,
   });
