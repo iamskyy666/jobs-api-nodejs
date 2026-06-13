@@ -3,7 +3,7 @@
 ## Live API
 
 Base URL:
-https://jobs-api-nodejs.onrender.com/api/v1
+https://jobs-api-nodejs-v28f.onrender.com
 
 A secure RESTful API built with Node.js, Express, MongoDB, and JWT Authentication that allows users to manage their job search activities.
 
