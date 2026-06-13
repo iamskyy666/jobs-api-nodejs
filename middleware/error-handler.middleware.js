@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { CustomAPIError } from "../errors/index.js";
 
 const errorHandlerMiddleware = (err, req, res, next) => {
   // custom error obj{}.
@@ -9,18 +8,20 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     msg: err.message || "🔴 Something went wrong.. Try again later.",
   };
 
-  if (err instanceof CustomAPIError) {
-    return res.status(err.statusCode).json({
-      msg: err.message,
-    });
-  }
-
   //! Old code - for reference
+
+  // if (err instanceof CustomAPIError) {
+  //   return res.status(err.statusCode).json({
+  //     msg: err.message,
+  //   });
+  // }
+
   // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
   //   err,
   // });
 
   //! Refactored code - better
+
   if (err.code && err.code === 11000) {
     customError.msg = `🔴 Duplicate value entered for ${Object.keys(err.keyValue)} field. Please choose another value`;
     customError.statusCode = 400;
