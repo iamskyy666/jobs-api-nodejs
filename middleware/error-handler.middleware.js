@@ -20,9 +20,18 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   //   err,
   // });
 
-  //! Refactored code - better
+  //! Refactored code - better/friendly error outputs.
+
+  if (err.name === "ValidationError") {
+    // Validation Err.
+    customError.msg = Object.values(err.errors)
+      .map((item) => item.message)
+      .join(",");
+    customError.statusCode = 400;
+  }
 
   if (err.code && err.code === 11000) {
+    // Duplicate Err.
     customError.msg = `🔴 Duplicate value entered for ${Object.keys(err.keyValue)} field. Please choose another value`;
     customError.statusCode = 400;
   }
@@ -33,7 +42,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
 
 export default errorHandlerMiddleware;
 
-// Example output on PostMan upon duplicate entry (by the same email):
+// Example output on PostMan upon duplicate entry (by the same email, duplicate error):
 // {
 //     "msg": "🔴 Duplicate value entered for email field. Please choose another value"
 // }
